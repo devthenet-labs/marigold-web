@@ -3,14 +3,17 @@
 'use strict';
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {loadGreeting, GREETING_PATH} = require('../static/app.js');
+const {loadGreeting, initNameForm, GREETING_PATH} = require('../static/app.js');
 
 function page() {
   const elements = {};
   for (const id of ['greeting', 'api-revision', 'served-at']) {
     elements[id] = {textContent: '', dataset: {}};
   }
-  return {elements, getElementById: id => elements[id]};
+  const listeners = {};
+  elements['name-form'] = {addEventListener: (type, handler) => { listeners[type] = handler; }};
+  elements['name-input'] = {value: ''};
+  return {elements, listeners, getElementById: id => elements[id]};
 }
 
 function respond(status, body) {
@@ -55,3 +58,47 @@ for (const [name, fetchGreeting] of Object.entries({
     assert.equal(doc.elements.greeting.dataset.state, 'error');
   });
 }
+
+test('submitting a valid name calls the API with the name query parameter', async () => {
+  const doc = page();
+  const api = respond(200, {message: 'Hello, Ada!', revision: 'abc123', servedAt: '2026-10-03T12:00:00Z'});
+  await initNameForm(doc, api.fetchGreeting);
+  doc.elements['name-input'].value = 'Ada';
+  await doc.listeners.submit({preventDefault() {}});
+  assert.deepEqual(api.calls.map(c => c.url), ['/api/greeting?name=Ada']);
+  assert.equal(doc.elements.greeting.textContent, 'Hello, Ada!');
+  assert.equal(doc.elements.greeting.dataset.state, 'ok');
+});
+
+test('submitting a name with special characters URL-encodes it', async () => {
+  const doc = page();
+  const name = "O'Brien Jr.";
+  const api = respond(200, {message: `Hello, ${name}!`});
+  await initNameForm(doc, api.fetchGreeting);
+  doc.elements['name-input'].value = name;
+  await doc.listeners.submit({preventDefault() {}});
+  assert.deepEqual(api.calls.map(c => c.url), [`/api/greeting?name=${encodeURIComponent(name)}`]);
+  assert.equal(doc.elements.greeting.textContent, `Hello, ${name}!`);
+  assert.equal(doc.elements.greeting.dataset.state, 'ok');
+});
+
+test('submitting an empty name calls the API without a name parameter', async () => {
+  const doc = page();
+  const api = respond(200, {message: 'Hello from Marigold'});
+  await initNameForm(doc, api.fetchGreeting);
+  doc.elements['name-input'].value = '';
+  await doc.listeners.submit({preventDefault() {}});
+  assert.deepEqual(api.calls.map(c => c.url), ['/api/greeting']);
+  assert.equal(doc.elements.greeting.textContent, 'Hello from Marigold');
+  assert.equal(doc.elements.greeting.dataset.state, 'ok');
+});
+
+test('a 400 response from the API shows its error message', async () => {
+  const doc = page();
+  const api = respond(400, {error: 'name must be 1-40 letters, spaces, hyphens or apostrophes'});
+  await initNameForm(doc, api.fetchGreeting);
+  doc.elements['name-input'].value = '<script>';
+  await doc.listeners.submit({preventDefault() {}});
+  assert.equal(doc.elements.greeting.textContent, 'name must be 1-40 letters, spaces, hyphens or apostrophes');
+  assert.equal(doc.elements.greeting.dataset.state, 'error');
+});

@@ -31,8 +31,40 @@ async function loadGreeting(doc, fetchGreeting) {
   }
 }
 
+async function initNameForm(doc, fetchGreeting) {
+  const form = doc.getElementById('name-form');
+  const input = doc.getElementById('name-input');
+  const greeting = doc.getElementById('greeting');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const name = input.value;
+    const url = name === '' ? GREETING_PATH : `${GREETING_PATH}?name=${encodeURIComponent(name)}`;
+    try {
+      const response = await fetchGreeting(url, {headers: {Accept: 'application/json'}, cache: 'no-store'});
+      const body = await response.json();
+      if (!response.ok) {
+        greeting.textContent = typeof body.error === 'string' ? body.error : `HTTP ${response.status}`;
+        greeting.dataset.state = 'error';
+        return;
+      }
+      if (typeof body.message !== 'string') {
+        throw new Error('malformed greeting');
+      }
+      // textContent only: the API's strings are never parsed as markup.
+      greeting.textContent = body.message;
+      greeting.dataset.state = 'ok';
+    } catch {
+      greeting.textContent = 'API unavailable';
+      greeting.dataset.state = 'error';
+    }
+  });
+}
+
 if (typeof module === 'object' && module.exports) {
-  module.exports = {loadGreeting, GREETING_PATH};
+  module.exports = {loadGreeting, initNameForm, GREETING_PATH};
 } else {
-  document.addEventListener('DOMContentLoaded', () => loadGreeting(document, window.fetch.bind(window)));
+  document.addEventListener('DOMContentLoaded', () => {
+    loadGreeting(document, window.fetch.bind(window));
+    initNameForm(document, window.fetch.bind(window));
+  });
 }
