@@ -1,0 +1,47 @@
+/* Copyright 2026 DevTheNet Labs. SPDX-License-Identifier: MIT */
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #fff7ed;
+  color: #1c1917;
+}
+
+.card {
+  width: min(32rem, calc(100vw - 2rem));
+  padding: 1.5rem 2rem;
+  border-radius: 0.75rem;
+  background: #f59e0b;
+  box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 15%);
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.greeting {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.greeting[data-state="error"] {
+  color: #7f1d1d;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0;
+}
+
+.meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}

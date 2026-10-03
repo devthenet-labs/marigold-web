@@ -1,0 +1,8 @@
+*
+!go.mod
+!*.go
+!static
+!static/**
+!Dockerfile
+!.patchy
+!.patchy/Dockerfile
