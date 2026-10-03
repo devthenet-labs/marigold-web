@@ -11,6 +11,12 @@
 <main class="card">
   <h1>Marigold</h1>
   <p id="greeting" class="greeting" aria-live="polite">Asking the API for a greeting...</p>
+  <form id="name-form" class="name-form">
+    <label for="name-input">Your name</label>
+    <input id="name-input" name="name" type="text" maxlength="40"
+           autocomplete="name" placeholder="Ada Lovelace">
+    <button type="submit">Greet me</button>
+  </form>
   <dl class="meta">
     <dt>API revision</dt>
     <dd><code id="api-revision">-</code></dd>

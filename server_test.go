@@ -63,7 +63,7 @@ func TestNoAPIRoutes(t *testing.T) {
 
 func TestIndexLoadsTheScriptAndHasAGreetingSlot(t *testing.T) {
 	body := serve(newHandler("test"), http.MethodGet, "/").Body.String()
-	for _, want := range []string{`id="greeting"`, `<script src="/static/app.js" defer></script>`, `href="/static/style.css"`} {
+	for _, want := range []string{`id="greeting"`, `id="name-form"`, `<script src="/static/app.js" defer></script>`, `href="/static/style.css"`} {
 		if !strings.Contains(body, want) {
 			t.Errorf("index lacks %q", want)
 		}
