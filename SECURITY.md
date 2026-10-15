@@ -7,7 +7,7 @@ This is a benign, stateless demo app. It has no accounts, secrets, database, fil
 | Image           | Built from       | Destination (repository variable)                      | Trusted reusable publisher |
 | --------------- | ---------------- | ------------------------------------------------------ | -------------------------- |
 | Runtime         | PR head, or main | `RUNTIME_IMAGE_REPOSITORY`:`sha-<40hex>` (+ `main-…`)  | `publish-runtime.yml`      |
-| Agent toolchain | main only        | `AGENT_IMAGE_REPOSITORY`:`toolchain-v1`                | `publish-agent.yml`        |
+| Agent toolchain | main only        | `AGENT_IMAGE_REPOSITORY`:`toolchain-v2`                | `publish-agent.yml`        |
 
 Build jobs have only `contents: read`, no OIDC permission, no repository variables, no cloud or model credentials and
 no persisted checkout credential. Fork PRs may test and build but never publish. The uploaded artifact is untrusted

@@ -7,7 +7,7 @@
 #   runtime, main:     sha-<40 hex> and main-<40 hex> (the main- tag is what
 #                      ECR lifecycle keeps, so unchanged repositories can
 #                      still preview main long after the sha- expiry)
-#   agent, main only:  toolchain-v1 (bump here and in .patchy/agent.yaml
+#   agent, main only:  toolchain-v2 (bump here and in .patchy/agent.yaml
 #                      when the agent recipe deliberately changes)
 # Every tag is checked on its own, so a re-run still adds main-<sha> when
 # sha-<sha> already exists. A different image at an existing tag is a hard
@@ -27,7 +27,7 @@ repository=$IMAGE_REPOSITORY
 case "$IMAGE_KIND/$IMAGE_SOURCE" in
   runtime/pull_request) tags=("sha-$IMAGE_SHA") ;;
   runtime/main) tags=("sha-$IMAGE_SHA" "main-$IMAGE_SHA") ;;
-  agent/main) tags=(toolchain-v1) ;;
+  agent/main) tags=(toolchain-v2) ;;
   *) fail "refusing a $IMAGE_KIND image from ${IMAGE_SOURCE:-an unknown source}" ;;
 esac
 
