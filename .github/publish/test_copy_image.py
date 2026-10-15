@@ -110,7 +110,7 @@ class PublisherScriptTest(unittest.TestCase):
                  "ROLE_ARN": "arn:aws:iam::123456789012:role/example-app-agent-push"}
         result = self.run_script("copy-image.sh", **agent)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(self.tags(), {"toolchain-v1": DIGEST})
+        self.assertEqual(self.tags(), {"toolchain-v2": DIGEST})
         refused = self.run_script("copy-image.sh", IMAGE_SOURCE="pull_request", **agent)
         self.assertNotEqual(refused.returncode, 0)
 

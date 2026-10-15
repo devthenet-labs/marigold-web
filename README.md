@@ -40,9 +40,10 @@ docker run --rm --read-only --cap-drop ALL --security-opt no-new-privileges \
   -p 127.0.0.1:8080:8080 marigold-web:local
 ```
 
-`.patchy/Dockerfile` is a different image: patchy's agent base plus the pinned Go toolchain, offline
-(`GOPROXY=off`), with no application source baked in. `.patchy/agent.yaml` names its immutable `toolchain-v1` tag, which
-the agent publisher pushes from main. (The toolchain has no Node; `test/app.test.cjs` runs in CI.)
+`.patchy/Dockerfile` is a different image: patchy's agent base plus the pinned Go toolchain and Node.js 22 (the line
+CI's runner provides, for the `node --test` suites), offline (`GOPROXY=off`, `npm_config_offline`), with no application
+source baked in. `.patchy/agent.yaml` names its immutable `toolchain-v2` tag, which the agent publisher pushes from main;
+bump the tag there and in `.github/publish/copy-image.sh` whenever the recipe changes.
 
 ## CI and images
 
@@ -54,6 +55,6 @@ the agent publisher pushes from main. (The toolchain has no Node; `test/app.test
   from GitHub's API, validates the OCI archive as data, and only then assumes a narrowly scoped role to copy it:
   - runtime: `sha-<commit>` for open same-repository PR heads and main commits; main commits are also tagged
     `main-<commit>` so the registry keeps them for previews of an unchanged repository;
-  - agent: `toolchain-v1`, from main only.
+  - agent: `toolchain-v2`, from main only.
 
 See [SECURITY.md](SECURITY.md) for the trust boundary and the repository variables.
