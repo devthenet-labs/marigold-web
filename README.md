@@ -40,9 +40,9 @@ docker run --rm --read-only --cap-drop ALL --security-opt no-new-privileges \
   -p 127.0.0.1:8080:8080 marigold-web:local
 ```
 
-`.patchy/Dockerfile` is a different image: patchy's agent base plus the pinned Go toolchain and Node.js 22 (the line
+`.maul/Dockerfile` is a different image: maul's agent base plus the pinned Go toolchain and Node.js 22 (the line
 CI's runner provides, for the `node --test` suites), offline (`GOPROXY=off`, `npm_config_offline`), with no application
-source baked in. `.patchy/agent.yaml` names its immutable `toolchain-v2` tag, which the agent publisher pushes from main;
+source baked in. `.maul/agent.yaml` names its immutable `toolchain-v2` tag, which the agent publisher pushes from main;
 bump the tag there and in `.github/publish/copy-image.sh` whenever the recipe changes.
 
 ## CI and images
